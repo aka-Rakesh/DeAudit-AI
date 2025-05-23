@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { WalletConnect } from "@/components/wallet/connect";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -48,7 +49,7 @@ export function Header() {
             </Link>
           </Button>
           <ModeToggle />
-          <Button className="hidden md:flex">Sign In</Button>
+          <div className="hidden md:flex"><WalletConnect /></div>
           <Button 
             variant="ghost" 
             size="icon" 
@@ -76,7 +77,7 @@ export function Header() {
             <Link href="#" className="text-sm font-medium transition-colors hover:text-primary px-2 py-1.5">
               About
             </Link>
-            <Button className="w-full mt-2">Sign In</Button>
+            <div className="w-full mt-2"><WalletConnect /></div>
           </nav>
         </div>
       )}
