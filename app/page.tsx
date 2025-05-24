@@ -1,15 +1,13 @@
 import { Features } from "@/components/features/features";
 import { Hero } from "@/components/layout/hero";
 import { Leaderboard } from "@/components/features/leaderboard/leaderboard";
+import Link from "next/link";
 
 export default function Home() {
   return (
     <div className="w-full">
       <Hero />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
-<<<<<<< Updated upstream
-        <AuditUploader />
-=======
         <section id="community-qa">
           <div className="mb-4 text-center">
             <h2 className="text-2xl font-bold mb-2">Community Q&amp;A</h2>
@@ -42,7 +40,6 @@ export default function Home() {
             </Link>
           </div>
         </section>
->>>>>>> Stashed changes
         <Features />
         <Leaderboard />
         <section
@@ -63,8 +60,8 @@ export default function Home() {
           </p>
           <div className="mb-6">
             <p className="font-medium text-base text-gray-700">
-              Hi, I'm Rakesh (
-              <span className="font-mono">aka_rakesh</span>), the creator of
+              Hi, I'm Rakesh (aka{" "}
+              <span className="font-mono">aka__rakesh</span>), the creator of
               DeAudit AI. I'm passionate about building tools and communities for
               new technologies. If you have feedback, ideas, or want to
               collaborate, feel free to reach out!
@@ -84,8 +81,7 @@ export default function Home() {
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block bg-blue-500 text-white px-6 py-2 rounded font-semibold shadow hover:bg-blue-600 transition"
-            >
-              X (Twitter)
+            >X (Twitter)
             </a>
           </div>
         </section>
