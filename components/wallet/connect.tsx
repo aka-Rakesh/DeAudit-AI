@@ -26,6 +26,12 @@ export function WalletConnect() {
   useEffect(() => {
     if (account?.address) {
       setAddress(account.address);
+      // Upsert profile on wallet connect (ignore errors)
+      fetch('/api/profiles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ wallet_address: account.address }),
+      }).catch(() => {});
     } else {
       setAddress(null);
     }

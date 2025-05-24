@@ -45,6 +45,7 @@
     "@supabase/supabase-js": "^2.49.8",
     "@tanstack/react-query": "^5.76.2",
     "@types/node": "^22.15.21",
+    "bufferutil": "^4.0.9",
     "chalk": "^5.4.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -70,6 +71,7 @@
     "tailwind-merge": "^3.3.0",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.8.3",
+    "utf-8-validate": "^6.0.5",
     "vaul": "^1.1.2",
     "zod": "^3.25.23",
     "zustand": "^5.0.5"
