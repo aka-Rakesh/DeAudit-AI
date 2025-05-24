@@ -1,6 +1,7 @@
 import { Features } from "@/components/features/features";
 import { Hero } from "@/components/layout/hero";
 import { Leaderboard } from "@/components/features/leaderboard/leaderboard";
+import { AuditUploader } from "@/components/features/upload/audit-uploader";
 import Link from "next/link";
 
 export default function Home() {
@@ -8,6 +9,7 @@ export default function Home() {
     <div className="w-full">
       <Hero />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+        {/* Community Q&A Section (from HEAD, more detailed) */}
         <section id="community-qa">
           <div className="mb-4 text-center">
             <h2 className="text-2xl font-bold mb-2">Community Q&amp;A</h2>
@@ -40,8 +42,11 @@ export default function Home() {
             </Link>
           </div>
         </section>
+        {/* AuditUploader from test branch, placed after Q&A section */}
+        <AuditUploader />
         <Features />
         <Leaderboard />
+        {/* About Section from test branch */}
         <section
           id="about"
           className="max-w-3xl mx-auto mt-16 text-center py-12"

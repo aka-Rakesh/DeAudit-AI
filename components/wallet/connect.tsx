@@ -2,6 +2,20 @@ import { useWalletStore } from '@/lib/store/wallet';
 import { useEffect } from 'react';
 import { ConnectButton, useCurrentAccount, useSignPersonalMessage } from '@mysten/dapp-kit';
 import { useToast } from '@/hooks/use-toast';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
+import { ChevronDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+
+// Utility to shorten address (0x123...abcd)
+function shortenAddress(addr: string) {
+  return addr.slice(0, 6) + '...' + addr.slice(-4);
+}
 
 export function WalletConnect() {
   const { address, setAddress } = useWalletStore();
@@ -12,6 +26,12 @@ export function WalletConnect() {
   useEffect(() => {
     if (account?.address) {
       setAddress(account.address);
+      // Upsert profile on wallet connect (ignore errors)
+      fetch('/api/profiles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ wallet_address: account.address }),
+      }).catch(() => {});
     } else {
       setAddress(null);
     }
@@ -28,7 +48,6 @@ export function WalletConnect() {
     try {
       const message = 'Sign to authenticate with DeAudit AI';
       const { signature } = await signPersonalMessage({ message: strToUint8Array(message) });
-      // Here you would send { address: account.address, signature } to your backend for verification
       toast({
         title: 'Authentication successful',
         description: `Address: ${account.address}\nSignature: ${signature}`,
@@ -42,17 +61,34 @@ export function WalletConnect() {
     }
   };
 
+  // Only show dropdown if connected (use Zustand address)
+  if (!address) {
+    return (
+      <div className="flex items-center h-16">
+        <ConnectButton className="w-auto" />
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col items-center gap-2">
-      <ConnectButton />
-      {address && (
-        <>
-          <div className="text-xs text-muted-foreground">{address}</div>
-          <button className="px-3 py-1 bg-primary text-white rounded" onClick={handleAuth}>
+    <div className="flex items-center h-16">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" className="flex items-center gap-2 w-auto" type="button">
+            {shortenAddress(address)}
+            <ChevronDown className="w-4 h-4 ml-1" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={handleAuth}>
             Authenticate
-          </button>
-        </>
-      )}
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => window.location.reload()}>
+            Disconnect
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }
