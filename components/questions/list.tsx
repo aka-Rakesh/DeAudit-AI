@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { VoteButtons } from '../vote/vote-buttons';
 
 // List all community questions
 export default function QuestionList() {
@@ -37,19 +38,22 @@ export default function QuestionList() {
       </div>
       <ul className="space-y-4">
         {questions.map((q) => (
-          <li key={q.id} className="border p-4 rounded shadow">
-            <Link href={`/questions/${q.id}`} className="text-lg font-semibold hover:underline">
-              {q.title}
-            </Link>
-            <div className="text-sm text-gray-500 mt-1">
-              By {q.author?.username || q.author?.wallet_address?.slice(0, 8) || 'Anonymous'} • {new Date(q.created_at).toLocaleString()}
+          <li key={q.id} className="border p-4 rounded shadow flex gap-4">
+            <VoteButtons targetId={q.id} type="question" initialVotes={q.votes ?? 0} />
+            <div className="flex-1">
+              <Link href={`/questions/${q.id}`} className="text-lg font-semibold hover:underline">
+                {q.title}
+              </Link>
+              <div className="text-sm text-gray-500 mt-1">
+                By {q.author?.username || q.author?.wallet_address?.slice(0, 8) || 'Anonymous'} • {new Date(q.created_at).toLocaleString()}
+              </div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {q.tags?.map((tag: string) => (
+                  <span key={tag} className="bg-gray-200 px-2 py-1 rounded text-xs">{tag}</span>
+                ))}
+              </div>
+              <div className="mt-2 text-gray-700 line-clamp-2">{q.content}</div>
             </div>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {q.tags?.map((tag: string) => (
-                <span key={tag} className="bg-gray-200 px-2 py-1 rounded text-xs">{tag}</span>
-              ))}
-            </div>
-            <div className="mt-2 text-gray-700 line-clamp-2">{q.content}</div>
           </li>
         ))}
       </ul>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useWalletStore } from '@/lib/store/wallet';
+import { VoteButtons } from '../vote/vote-buttons';
 
 export default function QuestionView() {
   const { address } = useWalletStore();
@@ -80,26 +81,34 @@ export default function QuestionView() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-2">{question.title}</h1>
-      <div className="text-gray-600 mb-2">
-        By {question.author?.username || question.author?.wallet_address?.slice(0, 8) || 'Anonymous'} • {new Date(question.created_at).toLocaleString()}
-      </div>
-      <div className="mb-4">{question.content}</div>
-      {question.code && (
-        <pre className="bg-gray-100 p-2 rounded mb-4 overflow-x-auto text-sm"><code>{question.code}</code></pre>
-      )}
-      <div className="mb-4 flex gap-2 flex-wrap">
-        {question.tags?.map((tag: string) => (
-          <span key={tag} className="bg-gray-200 px-2 py-1 rounded text-xs">{tag}</span>
-        ))}
+      <div className="flex gap-4 items-start">
+        <VoteButtons targetId={question.id} type="question" initialVotes={question.votes ?? 0} />
+        <div className="flex-1">
+          <h1 className="text-2xl font-bold mb-2">{question.title}</h1>
+          <div className="text-gray-600 mb-2">
+            By {question.author?.username || question.author?.wallet_address?.slice(0, 8) || 'Anonymous'} • {new Date(question.created_at).toLocaleString()}
+          </div>
+          <div className="mb-4">{question.content}</div>
+          {question.code && (
+            <pre className="bg-gray-100 p-2 rounded mb-4 overflow-x-auto text-sm"><code>{question.code}</code></pre>
+          )}
+          <div className="mb-4 flex gap-2 flex-wrap">
+            {question.tags?.map((tag: string) => (
+              <span key={tag} className="bg-gray-200 px-2 py-1 rounded text-xs">{tag}</span>
+            ))}
+          </div>
+        </div>
       </div>
       <h2 className="text-xl font-semibold mt-8 mb-2">Answers</h2>
       <ul className="space-y-4 mb-8">
         {answers.length === 0 && <li>No answers yet.</li>}
         {answers.map((a) => (
-          <li key={a.id} className="border p-3 rounded">
-            <div className="text-gray-700 whitespace-pre-line">{a.content}</div>
-            <div className="text-xs text-gray-500 mt-1">By {a.author} • {new Date(a.created_at).toLocaleString()}</div>
+          <li key={a.id} className="border p-3 rounded flex gap-4 items-start">
+            <VoteButtons targetId={a.id} type="answer" initialVotes={a.votes ?? 0} />
+            <div className="flex-1">
+              <div className="text-gray-700 whitespace-pre-line">{a.content}</div>
+              <div className="text-xs text-gray-500 mt-1">By {a.author_id || 'Anonymous'} • {new Date(a.created_at).toLocaleString()}</div>
+            </div>
           </li>
         ))}
       </ul>
