@@ -1,7 +1,20 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Shield, ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function Hero() {
+  const router = useRouter();
+
+  const handleGoToAudit = () => {
+    router.push("/audit");
+  };
+
+  const handleGoToGenerate = () => {
+    router.push("/generate");
+  };
+
   return (
     <div className="relative isolate overflow-hidden bg-gradient-to-b from-background to-background/80 py-24 sm:py-32">
       <div className="absolute inset-0 -z-10 h-full w-full bg-[radial-gradient(#2a2a69_1px,transparent_1px)] [background-size:24px_24px] opacity-20"></div>
@@ -13,17 +26,20 @@ export function Hero() {
             </div>
           </div>
           <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-            AI-Powered Audits for <span className="text-primary">Move</span> Smart Contracts
+            AI-Powered Audits for{" "}
+            <span className="text-primary">Move</span> Smart Contracts
           </h1>
           <p className="mt-6 text-lg leading-8 text-muted-foreground">
-            DeAudit AI helps you identify vulnerabilities in your Move smart contracts on the Sui blockchain, providing detailed reports and suggested fixes.
+            DeAudit AI helps you identify vulnerabilities in your Move smart
+            contracts on the Sui blockchain, providing detailed reports and
+            suggested fixes.
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Button size="lg" className="gap-1">
+            <Button size="lg" className="gap-1" onClick={handleGoToAudit}>
               Start Auditing <ChevronRight className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="lg">
-              Learn More
+            <Button variant="outline" size="lg" onClick={handleGoToGenerate}>
+              Generate Contract
             </Button>
           </div>
         </div>

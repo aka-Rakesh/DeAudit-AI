@@ -27,25 +27,25 @@ export function Header() {
 
         {/* Desktop navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          <Link href="#" className="text-sm font-medium transition-colors hover:text-primary">
-            Docs
+          <Link href="#features" className="text-sm font-medium transition-colors hover:text-primary">
+            Features
           </Link>
-          <Link href="#" className="text-sm font-medium transition-colors hover:text-primary">
-            API
+          <Link href="#community-qa" className="text-sm font-medium transition-colors hover:text-primary">
+            Community Q&amp;A
           </Link>
-          <Link href="#" className="text-sm font-medium transition-colors hover:text-primary">
-            Pricing
+          <Link href="#leaderboard" className="text-sm font-medium transition-colors hover:text-primary">
+            Leaderboard
           </Link>
-          <Link href="#" className="text-sm font-medium transition-colors hover:text-primary">
+          <Link href="#about" className="text-sm font-medium transition-colors hover:text-primary">
             About
           </Link>
         </nav>
 
         <div className="flex items-center gap-2">
           <Button variant="outline" size="icon" asChild>
-            <Link href="https://github.com" target="_blank" rel="noreferrer">
+            <Link href="https://github.com/move-language/move" target="_blank" rel="noreferrer">
               <Github className="h-4 w-4" />
-              <span className="sr-only">GitHub</span>
+              <span className="sr-only">Move Docs (GitHub)</span>
             </Link>
           </Button>
           <ModeToggle />
@@ -65,16 +65,16 @@ export function Header() {
       {isMenuOpen && (
         <div className="md:hidden border-t py-4">
           <nav className="container flex flex-col space-y-3">
-            <Link href="#" className="text-sm font-medium transition-colors hover:text-primary px-2 py-1.5">
-              Docs
+            <Link href="#features" className="text-sm font-medium transition-colors hover:text-primary px-2 py-1.5">
+              Features
             </Link>
-            <Link href="#" className="text-sm font-medium transition-colors hover:text-primary px-2 py-1.5">
-              API
+            <Link href="#community-qa" className="text-sm font-medium transition-colors hover:text-primary px-2 py-1.5">
+              Community Q&amp;A
             </Link>
-            <Link href="#" className="text-sm font-medium transition-colors hover:text-primary px-2 py-1.5">
-              Pricing
+            <Link href="#leaderboard" className="text-sm font-medium transition-colors hover:text-primary px-2 py-1.5">
+              Leaderboard
             </Link>
-            <Link href="#" className="text-sm font-medium transition-colors hover:text-primary px-2 py-1.5">
+            <Link href="#about" className="text-sm font-medium transition-colors hover:text-primary px-2 py-1.5">
               About
             </Link>
             <div className="w-full mt-2"><WalletConnect /></div>
