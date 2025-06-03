@@ -7,7 +7,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-export async function GET(req) {
+export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const question_id = searchParams.get('question_id');
   if (!question_id) return NextResponse.json({ error: 'Missing question_id' }, { status: 400 });
