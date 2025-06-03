@@ -1,7 +1,6 @@
 import { Features } from "@/components/features/features";
 import { Hero } from "@/components/layout/hero";
 import { Leaderboard } from "@/components/features/leaderboard/leaderboard";
-import { AuditUploader } from "@/components/features/upload/audit-uploader";
 import Link from "next/link";
 
 export default function Home() {
@@ -9,11 +8,10 @@ export default function Home() {
     <div className="w-full">
       <Hero />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
-        {/* Community Q&A Section (from HEAD, more detailed) */}
         <section id="community-qa">
           <div className="mb-4 text-center">
             <h2 className="text-2xl font-bold mb-2">Community Q&amp;A</h2>
-            <p className="text-gray-500 mb-4">
+            <p className="text-muted-foreground mb-4">
               Ask and answer questions about Move smart contract security.
             </p>
             <div className="flex justify-center mb-4">
@@ -42,17 +40,14 @@ export default function Home() {
             </Link>
           </div>
         </section>
-        {/* AuditUploader from test branch, placed after Q&A section */}
-        <AuditUploader />
         <Features />
         <Leaderboard />
-        {/* About Section from test branch */}
         <section
           id="about"
           className="max-w-3xl mx-auto mt-16 text-center py-12"
         >
           <h2 className="text-3xl font-bold mb-4">About DeAudit AI</h2>
-          <p className="text-lg text-gray-500 mb-6">
+          <p className="text-lg text-muted-foreground mb-6">
             Move is a relatively new smart contract language, and as such, it
             lacks the large, established community and resources that other
             ecosystems enjoy. This can make it challenging for new developers to
@@ -65,8 +60,8 @@ export default function Home() {
           </p>
           <div className="mb-6">
             <p className="font-medium text-base text-gray-700">
-              Hi, I'm Rakesh (
-              <span className="font-mono">aka_rakesh</span>), the creator of
+              Hi, I'm Rakesh (aka{" "}
+              <span className="font-mono">aka__rakesh</span>), the creator of
               DeAudit AI. I'm passionate about building tools and communities for
               new technologies. If you have feedback, ideas, or want to
               collaborate, feel free to reach out!
@@ -74,7 +69,7 @@ export default function Home() {
           </div>
           <div className="flex justify-center gap-4">
             <a
-              href="https://github.com/aka-Rakesh"
+              href="https://github.com/akaRakesh"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block bg-gray-900 text-white px-6 py-2 rounded font-semibold shadow hover:bg-gray-800 transition"
