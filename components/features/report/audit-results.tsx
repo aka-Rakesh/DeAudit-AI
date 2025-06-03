@@ -92,15 +92,6 @@ export function AuditResults({ report, onReset }: AuditResultsProps) {
             <Progress
               value={report.score}
               className="h-2 mt-4"
-              indicatorClassName={
-                report.score >= 90
-                  ? "bg-green-500"
-                  : report.score >= 70
-                  ? "bg-yellow-500"
-                  : report.score >= 50
-                  ? "bg-orange-500"
-                  : "bg-destructive"
-              }
             />
           </CardContent>
         </Card>
