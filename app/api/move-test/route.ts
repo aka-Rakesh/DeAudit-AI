@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { exec } from 'child_process';
+import { exec as execCb } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import { promisify } from 'util';
+
+const exec = promisify(execCb);
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,17 +21,14 @@ export async function POST(req: NextRequest) {
 
     // Run Move CLI (replace with actual command as needed)
     const command = `move check ${filePath}`;
-    return new Promise((resolve) => {
-      exec(command, (error, stdout, stderr) => {
-        // Clean up temp file
-        fs.unlinkSync(filePath);
-        if (error) {
-          resolve(NextResponse.json({ success: false, output: stderr || stdout }));
-        } else {
-          resolve(NextResponse.json({ success: true, output: stdout }));
-        }
-      });
-    });
+    try {
+      const { stdout } = await exec(command);
+      fs.unlinkSync(filePath);
+      return NextResponse.json({ success: true, output: stdout });
+    } catch (error: any) {
+      fs.unlinkSync(filePath);
+      return NextResponse.json({ success: false, output: error.stderr || error.stdout || error.message });
+    }
   } catch (err) {
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
   }
