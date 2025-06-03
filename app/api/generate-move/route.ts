@@ -10,25 +10,19 @@ export async function POST(request: NextRequest) {
 
     // Call Python script to generate Move contract
     const options = {
-      mode: 'text',
+      mode: 'text' as const,
       pythonPath: 'python3',
       pythonOptions: ['-u'],
       scriptPath: './llm',
       args: [prompt],
     };
 
-    const result = await new Promise<string>((resolve, reject) => {
-      PythonShell.run('generate.py', options, (err, output) => {
-        if (err) reject(err);
-        if (output && output.length > 0) {
-          resolve(output.join('\n'));
-        } else {
-          reject(new Error('No output from Python script'));
-        }
-      });
-    });
-
-    return NextResponse.json({ code: result });
+    const result = await PythonShell.run('generate.py', options);
+    const code = result && result.length > 0 ? result.join('\n') : '';
+    if (!code) {
+      return NextResponse.json({ error: 'No output from Python script' }, { status: 500 });
+    }
+    return NextResponse.json({ code });
   } catch (error) {
     console.error('Error generating Move contract:', error);
     return NextResponse.json({ error: 'Failed to generate contract' }, { status: 500 });
