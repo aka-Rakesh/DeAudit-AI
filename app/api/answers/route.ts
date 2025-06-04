@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+
 // API route for answers: GET (by question), POST (create)
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';

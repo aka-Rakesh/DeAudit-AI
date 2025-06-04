@@ -1,3 +1,4 @@
+export const runtime = "nodejs";
 import { NextRequest, NextResponse } from 'next/server';
 import { exec as execCb } from 'child_process';
 import fs from 'fs';

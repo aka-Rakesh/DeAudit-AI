@@ -1,4 +1,5 @@
 export const dynamic = 'force-dynamic';
+export const runtime = "nodejs";
 
 // API route for questions: GET (list), POST (create)
 import { createClient } from '@supabase/supabase-js';
