@@ -1,34 +1,23 @@
 import sys
-from transformers import AutoTokenizer, AutoModelForCausalLM
-import torch
+import requests
 
-def load_model():
-    model_name = "deepseek-ai/deepseek-coder-1.3b-base"
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        torch_dtype=torch.float16,
-        device_map="auto"
-    )
-    return model, tokenizer
-
-def generate_contract(prompt: str, model, tokenizer) -> str:
+def generate_contract(prompt: str) -> str:
     full_prompt = f"""Generate a Move smart contract based on the following description:\n\n{prompt}\n\nProvide only the Move code as output."""
-    inputs = tokenizer(full_prompt, return_tensors="pt").to(model.device)
-    with torch.no_grad():
-        outputs = model.generate(
-            **inputs,
-            max_new_tokens=512,
-            temperature=0.7,
-            top_p=0.95,
-            do_sample=True
-        )
-    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    response = requests.post(
+        "http://localhost:11434/api/generate",
+        json={
+            "model": "codellama:7b",
+            "prompt": full_prompt,
+            "stream": False
+        }
+    )
+    result = response.json()
+    code = result.get('response', '')
     # Extract code block (after prompt)
-    code_start = response.find("module ")
+    code_start = code.find("module ")
     if code_start != -1:
-        return response[code_start:]
-    return response
+        return code[code_start:]
+    return code
 
 def main():
     prompt = sys.argv[1] if len(sys.argv) > 1 else ""
@@ -36,8 +25,7 @@ def main():
         print("No prompt provided", file=sys.stderr)
         sys.exit(1)
     try:
-        model, tokenizer = load_model()
-        code = generate_contract(prompt, model, tokenizer)
+        code = generate_contract(prompt)
         print(code)
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
