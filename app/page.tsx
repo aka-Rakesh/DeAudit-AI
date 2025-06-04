@@ -60,7 +60,7 @@ export default function Home() {
           </p>
           <div className="mb-6">
             <p className="font-medium text-base text-gray-700">
-              Hi, I'm Rakesh (aka{" "}
+              Hi, I'm Rakesh (
               <span className="font-mono">aka__rakesh</span>), the creator of
               DeAudit AI. I'm passionate about building tools and communities for
               new technologies. If you have feedback, ideas, or want to
@@ -69,7 +69,7 @@ export default function Home() {
           </div>
           <div className="flex justify-center gap-4">
             <a
-              href="https://github.com/akaRakesh"
+              href="https://github.com/aka-Rakesh"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block bg-gray-900 text-white px-6 py-2 rounded font-semibold shadow hover:bg-gray-800 transition"
