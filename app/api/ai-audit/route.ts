@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AuditReport } from '@/lib/types';
+import { spawn } from 'child_process';
+import os from 'os';
+import fs from 'fs';
+import path from 'path';
+import util from 'util';
+import { calculateSecurityScore } from '@/lib/audit';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,51 +19,76 @@ export async function POST(request: NextRequest) {
     }
     const fileContent = await file.text();
 
-    // Simulate audit delay for loading animation (15-30 seconds)
-    const delay = Math.floor(Math.random() * 15) + 15; // 15-30 seconds
-    await new Promise(resolve => setTimeout(resolve, delay * 1000));
+    // Write file content to a temporary file
+    const tempDir = os.tmpdir();
+    const tempFilePath = path.join(tempDir, `audit_${Date.now()}.move`);
+    fs.writeFileSync(tempFilePath, fileContent, 'utf8');
 
-    // Dummy check: if the file content matches the provided Token.move, return a hardcoded audit report
-    if (fileContent.includes('module Evm::ERC20Token')) {
-      const dummyReport: AuditReport = {
-        contractName: 'ERC20Token',
-        issues: [
-          {
-            id: '1',
-            title: 'Unchecked Arithmetic in transfer_from',
-            description: 'The subtraction allowance.amount - amount is not checked for underflow.',
-            severity: 'Medium',
-            location: { start: { line: 74, column: 9 }, end: { line: 76, column: 11 } },
-            codeSnippet: 'allowance.amount = allowance.amount - amount;',
-            suggestedFix: 'assert!(allowance.amount >= amount, errors::limit_exceeded(0));\nallowance.amount = allowance.amount - amount;'
-          },
-          {
-            id: '2',
-            title: 'Missing Access Control on approve',
-            description: 'Anyone can call approve on behalf of sender, consider restricting access.',
-            severity: 'Low',
-            location: { start: { line: 61, column: 5 }, end: { line: 65, column: 6 } },
-            codeSnippet: 'public fun approve(spender: address, amount: u128) acquires Account { ... }',
-            suggestedFix: '// Add access control\npublic fun approve(spender: address, amount: u128) acquires Account {\n  assert!(sender() == sign(self()), errors::not_authorized(0));\n  ...\n}'
-          }
-        ],
-        summary: '2 issues found: 1 medium, 1 low. Review arithmetic operations and access control.',
-        score: 85,
-        timestamp: new Date().toISOString(),
-      };
-      return NextResponse.json(dummyReport);
+    // Call analyze.py with the temp file path as an argument
+    const pythonCmd = 'python';
+    const analyzePath = path.join(process.cwd(), 'llm', 'analyze.py');
+    const args = [analyzePath, tempFilePath];
+    const pythonProcess = spawn(pythonCmd, args, {
+      cwd: path.join(process.cwd(), 'llm'),
+      // shell: true, // Removed to fix Windows path with spaces issue
+    });
+
+    let output = '';
+    let error = '';
+    pythonProcess.stdout.on('data', (data) => {
+      output += data.toString();
+    });
+    pythonProcess.stderr.on('data', (data) => {
+      error += data.toString();
+    });
+
+    const exitCode: number = await new Promise((resolve) => {
+      pythonProcess.on('close', resolve);
+    });
+
+    fs.unlinkSync(tempFilePath);
+
+    if (exitCode !== 0) {
+      // Log and return detailed error
+      return NextResponse.json({
+        error: 'Failed to analyze contract',
+        exitCode,
+        pythonCmd: `${pythonCmd} ${args.join(' ')}`,
+        stderr: error,
+        stdout: output,
+      },
+      { status: 500 });
     }
 
-    // Fallback: return a generic no-issues report
-    const fallbackReport: AuditReport = {
-      contractName: file.name.replace('.move', ''),
-      issues: [],
-      summary: 'No issues found. Contract appears secure.',
-      score: 100,
-      timestamp: new Date().toISOString(),
-    };
-    return NextResponse.json(fallbackReport);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to process the audit request' }, { status: 500 });
+    let auditReport: any; // Use 'any' to allow contractCode
+    try {
+      auditReport = JSON.parse(output);
+      // Always include contractCode in the response
+      auditReport.contractCode = fileContent;
+      // Ensure every issue has a codeSnippet (fallback to empty string) and a unique id
+      auditReport.issues = (auditReport.issues || []).map((issue: any, idx: number) => ({
+        ...issue,
+        codeSnippet: issue.codeSnippet || "",
+        id: issue.id || `${issue.title || 'issue'}-${idx}`,
+      }));
+    } catch (e) {
+      // Log and return JSON parse error with details
+      return NextResponse.json({
+        error: 'Invalid JSON from analyzer',
+        details: output,
+        stderr: error,
+        pythonCmd: `${pythonCmd} ${args.join(' ')}`,
+        exception: e instanceof Error ? e.stack : util.inspect(e),
+      },
+      { status: 500 });
+    }
+    return NextResponse.json(auditReport);
+  } catch (error: any) {
+    // Log and return any caught exception with stack trace
+    return NextResponse.json({
+      error: 'Failed to process the audit request',
+      exception: error?.stack || error?.toString() || error,
+    },
+    { status: 500 });
   }
 }

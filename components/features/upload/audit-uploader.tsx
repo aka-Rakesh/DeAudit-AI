@@ -81,11 +81,31 @@ export function AuditUploader() {
         body: formData,
       });
 
+      let data;
       if (!response.ok) {
-        throw new Error('Failed to audit contract');
+        // Try to get the backend's error details
+        try {
+          const errorBody = await response.json();
+          console.error('Audit API error:', errorBody);
+          toast({
+            title: "Audit failed",
+            description: errorBody.error || "There was an error processing your contract",
+            variant: "destructive",
+          });
+        } catch {
+          // fallback if not JSON
+          console.error('Audit API error: Non-JSON error');
+          toast({
+            title: "Audit failed",
+            description: "There was an error processing your contract",
+            variant: "destructive",
+          });
+        }
+        setIsLoading(false);
+        return;
       }
 
-      const data = await response.json();
+      data = await response.json();
       setAuditReport(data);
       
       toast({

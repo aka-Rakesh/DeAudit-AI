@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 export function LoadingAnimation() {
   const [progress, setProgress] = useState(0);
+  const [showSpinner, setShowSpinner] = useState(false);
   const steps = [
     "Parsing smart contract...",
     "Analyzing code structure...",
@@ -17,16 +18,17 @@ export function LoadingAnimation() {
   const [currentStep, setCurrentStep] = useState(0);
 
   useEffect(() => {
+    // Fill progress bar over 100 seconds (1000ms per percent)
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
+          setShowSpinner(true);
           return 100;
         }
         return prev + 1;
       });
-    }, 50);
-
+    }, 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -39,8 +41,7 @@ export function LoadingAnimation() {
         }
         return prev + 1;
       });
-    }, 2000);
-
+    }, 20000); // Spread steps over 100 seconds
     return () => clearInterval(stepInterval);
   }, [steps.length]);
 
@@ -53,7 +54,7 @@ export function LoadingAnimation() {
               <div className="absolute inset-0 border-4 border-primary/30 rounded-full"></div>
               <div 
                 className="absolute inset-0 border-4 border-t-primary border-r-primary border-b-transparent border-l-transparent rounded-full animate-spin"
-                style={{ animationDuration: '1.5s' }}
+                style={{ animationDuration: '1.5s', display: showSpinner ? 'block' : 'none' }}
               ></div>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="w-4 h-4 bg-primary rounded-full animate-pulse"></div>
@@ -65,9 +66,16 @@ export function LoadingAnimation() {
           <p className="text-muted-foreground mb-6">{steps[currentStep]}</p>
           
           <div className="w-full max-w-md mb-2">
-            <Progress value={progress} className="h-2" />
+            {!showSpinner ? (
+              <Progress value={progress} className="h-2" />
+            ) : (
+              <div className="flex items-center justify-center mt-2">
+                <span className="animate-spin inline-block w-6 h-6 border-4 border-primary border-t-transparent rounded-full"></span>
+                <span className="ml-2 text-muted-foreground text-sm">Finalizing audit...</span>
+              </div>
+            )}
           </div>
-          <p className="text-sm text-muted-foreground">{progress}% complete</p>
+          {!showSpinner && <p className="text-sm text-muted-foreground">{progress}% complete</p>}
         </div>
       </CardContent>
     </Card>
